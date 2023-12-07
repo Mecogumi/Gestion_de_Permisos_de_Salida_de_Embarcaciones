@@ -13,13 +13,13 @@ import org.LittleBoat.View.NuevoPropetario;
 import org.LittleBoat.View.OwnerTable;
 import org.LittleBoat.View.ShipTable;
 
-public class NavWDController{
+public class NavWDController {
 
     private final NavigationWindow navigationWindow;
     private final OwnerTable localOwnerList;
     private final ShipTable localShipList;
     private JPanel localMutablePanel;
-    private JTextField searchBar; //lo usare cuando le de al boton de busqueda
+    private JTextField searchBar; // lo usare cuando le de al boton de busqueda
 
     public NavWDController(NavigationWindow inNavigationWindow) {
         navigationWindow = inNavigationWindow;
@@ -56,10 +56,9 @@ public class NavWDController{
         localMutablePanel.repaint();
     }
 
-    
     private class FilterButtonHandler implements ActionListener {
         @Override
-        public void actionPerformed(ActionEvent e) {  
+        public void actionPerformed(ActionEvent e) {
             System.out.println("conecto al back y proyecto en la pagina segun el filtro el cual es");
             System.out.println(navigationWindow.getFilterComboBoxSelectedItem());
         }
@@ -80,7 +79,8 @@ public class NavWDController{
             System.out.println("distinguir qué lista está activa y redirigir a la ventana correcta");
             if (localMutablePanel.getComponent(0) instanceof OwnerTable) {
                 NuevoPropetario newOwnerWindow = new NuevoPropetario();
-                newOwnerWindow.setVisible(true);
+                newOwnerWindowController newOwnerWindowController = new newOwnerWindowController(newOwnerWindow);
+                System.out.println("test");
             } else if (localMutablePanel.getComponent(0) instanceof ShipTable) {
                 NuevoBarco newShipWindow = new NuevoBarco();
                 newShipWindow.setVisible(true);
@@ -89,7 +89,6 @@ public class NavWDController{
             }
         }
     }
-    
 
     private class ShipListButtonHandler implements ActionListener {
         @Override
