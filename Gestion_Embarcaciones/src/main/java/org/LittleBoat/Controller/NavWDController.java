@@ -3,8 +3,11 @@ package org.LittleBoat.Controller;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import org.LittleBoat.View.Historial;
 import org.LittleBoat.View.NavigationWindow;
@@ -12,6 +15,11 @@ import org.LittleBoat.View.NuevoBarco;
 import org.LittleBoat.View.NuevoPropetario;
 import org.LittleBoat.View.OwnerTable;
 import org.LittleBoat.View.ShipTable;
+import org.LittleBoat.connection.H2Connection;
+import org.LittleBoat.dao.BarcosDAO;
+import org.LittleBoat.dao.PropietariosDAO;
+import org.LittleBoat.dto.BarcosDTO;
+import org.LittleBoat.dto.PropietariosDTO;
 
 public class NavWDController {
 
@@ -35,13 +43,36 @@ public class NavWDController {
         navigationWindow.setFilterComboBoxListener(new FilterButtonHandler());
         localOwnerList = new OwnerTable();
         localShipList = new ShipTable();
-        loadOwnerView();
+        loadShipView();
+    }
+
+    private void loadShipTableModel() {
+        DefaultTableModel model = (DefaultTableModel) localShipList.getShipTable().getModel();
+        BarcosDAO barcosDAO = new BarcosDAO(H2Connection.getInstance());
+        ArrayList<BarcosDTO> listabarcos = (ArrayList<BarcosDTO>) barcosDAO.findAll();
+        for (BarcosDTO barco : listabarcos) {
+            model.addRow(new Object[] { barco.getNomBarco(), barco.getCapitaniaPuerto(), barco.getEstadoBarco() });
+        }
+        localShipList.getShipTable().setModel(model);
+    }
+
+    private void loadOwnerTableModel() {
+        DefaultTableModel model = (DefaultTableModel) localOwnerList.getOwnerTable().getModel();
+        PropietariosDAO propietariosDAO = new PropietariosDAO(H2Connection.getInstance());
+        ArrayList<PropietariosDTO> listapPopietarios = (ArrayList<PropietariosDTO>) propietariosDAO.findAll();
+        for (PropietariosDTO propietario : listapPopietarios) {
+            model.addRow(
+                    new Object[] { propietario.getNomProp() + " " + propietario.getApsProp(), propietario.getTelefono(),
+                            propietario.getCorreo() });
+        }
+        localOwnerList.getOwnerTable().setModel(model);
     }
 
     private void loadShipView() {
         localShipList.setSize(localMutablePanel.getSize());
         localShipList.setLocation(0, 0);
         localMutablePanel.removeAll();
+        loadShipTableModel();
         localMutablePanel.add(localShipList, BorderLayout.CENTER);
         localMutablePanel.revalidate();
         localMutablePanel.repaint();
@@ -51,6 +82,7 @@ public class NavWDController {
         localOwnerList.setSize(localMutablePanel.getSize());
         localOwnerList.setLocation(0, 0);
         localMutablePanel.removeAll();
+        loadOwnerTableModel();
         localMutablePanel.add(localOwnerList, BorderLayout.CENTER);
         localMutablePanel.revalidate();
         localMutablePanel.repaint();
@@ -80,10 +112,9 @@ public class NavWDController {
             if (localMutablePanel.getComponent(0) instanceof OwnerTable) {
                 NuevoPropetario newOwnerWindow = new NuevoPropetario();
                 newOwnerWindowController newOwnerWindowController = new newOwnerWindowController(newOwnerWindow);
-                System.out.println("test");
             } else if (localMutablePanel.getComponent(0) instanceof ShipTable) {
                 NuevoBarco newShipWindow = new NuevoBarco();
-                newShipWindow.setVisible(true);
+                newShipWindowController newShipWindowController = new newShipWindowController(newShipWindow);
             } else {
                 System.out.println("error");
             }

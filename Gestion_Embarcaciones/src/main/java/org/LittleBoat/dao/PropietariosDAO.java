@@ -157,7 +157,7 @@ public class PropietariosDAO extends PaginDao {
      *
      * @return Una lista de objetos PropietariosDTO.
      */
-    public List<PropietariosDTO> findAll() {
+    public ArrayList<PropietariosDTO> findAll() {
         ArrayList<PropietariosDTO> propietarios = new ArrayList<>();
         Connection connection = this.connectionManager.getConnection();
         Statement statement = null;
